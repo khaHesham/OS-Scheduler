@@ -1,0 +1,10 @@
+1.clock( only one?) !!!!!!!!!!!!!!!!!!!!
+2.IPC !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+3.schaduler and termination? !!
+4.execV ?  !!
+5.If your algorithm does a lot of processing, processes might not start and stop
+at the same time instance. Then, your utilization should be less than 100%.
+6.You should specify how your algorithm handles ties.
+7.clear IPC resources.
+8.release all the IPC resources upon exit.
+9.
