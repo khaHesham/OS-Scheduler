@@ -137,7 +137,7 @@ void swap(ProcessData *d1, ProcessData *d2)
 
 void heapify(MinHeap *hp, int i)
 {
-    if (hp->algo == 1) // HPF    (priority)
+    if (hp->algo == HPF) // HPF    (priority)
     {
         int smallest = (LEFTCHILD(i) < hp->size && hp->elements[LEFTCHILD(i)].priority < hp->elements[i].priority) ? LEFTCHILD(i) : i;
         if (RIGHTCHILD(i) < hp->size && hp->elements[RIGHTCHILD(i)].priority < hp->elements[smallest].priority)
@@ -182,7 +182,7 @@ void push(MinHeap *hp, ProcessData data)
     nd.ID = data.ID;
 
     int i = (hp->size)++;
-    if (hp->algo == 1) // hpf
+    if (hp->algo == HPF) // hpf
     {
         while (i && nd.priority < hp->elements[PARENT(i)].priority)
         {
