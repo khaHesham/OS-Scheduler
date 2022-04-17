@@ -6,38 +6,46 @@ typedef short bool;
 #define false 0
 #define SHKEY 300
 
-#define LEFTCHILD(x) 2 * x + 1     //macros used in heap 
-#define RIGHTCHILD(x) 2 * x + 2
+#define LEFTCHILD(x) 2 * x + 1  // macros used in heap
+#define RIGHTCHILD(x) 2 * x + 2 // x here is index in the heap array
 #define PARENT(x) (x - 1) / 2
+/*
+        MinHeap  --> Remember:parent is always less than his children
+                     indecies:                 0 1  2 3  4  5  6
+            4        array implementation: -->  4 8 10 12 11 17 19    #leftchild(index 0)=2*0+1=[1]=8   #rightchild(index 2)=2*2+2= [6]=19
+          8   10
+       12 11 17 19
+*/
 
-
-enum algorithm   //used to decide which priority we will take in the priority queue
+enum algorithm // used to decide which priority we will take in the priority queue
 {
-    SRTN,
-    HPF,
+    SRTN, // remaining time is the periority
+    HPF,  // periority
 };
 
-
-// used in SRTN priority queue
-typedef struct ProcessData
-{
+// used in priority queue
+typedef struct ProcessData // typedef here means  that i can create a struct using only the name of it without typing struct before it
+{                          // ex:  -struct ProcessData data  (Wrong || old way implementation)  -ProcessData data (correct) //simple isn't it? :D
     int remainingTime;
     int ID;
     int priority;
-}ProcessData;
+    /*
+    int arrivaltime;  <<<<we may need to store them also>>>>
+    int runningtime;
+    */
 
+} ProcessData;
 
 /*
-******************************************************************* \
-************************ DATA STRUCTURES PART ********************* ========>QUEUE & PRIORITY QUEUE
-******************************************************************* /
+               / ******************************************************************* \
+            ************ ========> (((# QUEUE & PRIORITY QUEUE #)))) <========= ************
+               \ ******************************************************************* /
 */
-
 
 ///  QUEUE
 typedef struct Node
 {
-    struct ProcessData* data;
+    struct ProcessData *data;
     struct Node *next;
 } Node;
 
@@ -56,7 +64,7 @@ Node *newNode(ProcessData data)
     return temp;
 }
 
-Queue init()
+Queue init() // initialize the queue
 {
     Queue q;
     q.front = q.rear = NULL;
@@ -73,7 +81,6 @@ void dequeue(Queue *q)
     free(temp); // built in function used to free unused allocated memory!
     if (q->front == NULL)
         q->rear = NULL;
-
     q->size -= 1;
 }
 
@@ -106,150 +113,150 @@ int isEmpty(Queue *q)
     return q->size == 0;
 }
 
-
-
-
-/// PRIORITY QUEUE  
+/// PRIORITY QUEUE
 typedef struct MinHeap
 {
-    ProcessData*elements;
-    enum algorithm algo;
-    int size;
-}MinHeap;
+    ProcessData *elements; // array of processes
+    enum algorithm algo;   // used to define which algorithm we are dealing with
+    int size;              // size of our elements array
+} MinHeap;
 
 MinHeap initMinHeap(enum algorithm a)
 {
     MinHeap hp;
-    hp.size=0;
-    hp.algo=a;
+    hp.size = 0;
+    hp.algo = a;
 }
 
-void swap(ProcessData*d1, ProcessData *d2)
+void swap(ProcessData *d1, ProcessData *d2)
 {
-    ProcessData temp=*d1;
-    *d1=*d2;
-    *d2=temp;
-
+    ProcessData temp = *d1;
+    *d1 = *d2;
+    *d2 = temp;
 }
 
 void heapify(MinHeap *hp, int i)
 {
-    if(hp->algo==1)  //HPF
+    if (hp->algo == 1) // HPF    (priority)
     {
-        int smallest = (LEFTCHILD(i) < hp->size && hp->elements[LEFTCHILD(i)].priority < hp->elements[i].priority) ? LEFTCHILD(i) : i ;
-        if(RIGHTCHILD(i) < hp->size && hp->elements[RIGHTCHILD(i)].priority < hp->elements[smallest].priority) {
-            smallest = RIGHTCHILD(i) ;
+        int smallest = (LEFTCHILD(i) < hp->size && hp->elements[LEFTCHILD(i)].priority < hp->elements[i].priority) ? LEFTCHILD(i) : i;
+        if (RIGHTCHILD(i) < hp->size && hp->elements[RIGHTCHILD(i)].priority < hp->elements[smallest].priority)
+        {
+            smallest = RIGHTCHILD(i);
         }
-        if(smallest != i) {
-            swap(&(hp->elements[i]), &(hp->elements[smallest])) ;
-            heapify(hp, smallest) ;
+        if (smallest != i)
+        {
+            swap(&(hp->elements[i]), &(hp->elements[smallest]));
+            heapify(hp, smallest);
         }
     }
-    else   //SRTN
+    else // SRTN      (remaining time)
     {
-        int smallest = (LEFTCHILD(i) < hp->size && hp->elements[LEFTCHILD(i)].remainingTime < hp->elements[i].remainingTime) ? LEFTCHILD(i) : i ;
-        if(RIGHTCHILD(i) < hp->size && hp->elements[RIGHTCHILD(i)].remainingTime < hp->elements[smallest].remainingTime) {
-        smallest = RIGHTCHILD(i) ;
+        int smallest = (LEFTCHILD(i) < hp->size && hp->elements[LEFTCHILD(i)].remainingTime < hp->elements[i].remainingTime) ? LEFTCHILD(i) : i;
+        if (RIGHTCHILD(i) < hp->size && hp->elements[RIGHTCHILD(i)].remainingTime < hp->elements[smallest].remainingTime)
+        {
+            smallest = RIGHTCHILD(i);
         }
-        if(smallest != i) {
-            swap(&(hp->elements[i]), &(hp->elements[smallest])) ;
-            heapify(hp, smallest) ;
+        if (smallest != i)
+        { // if it is not already at the correct place
+            swap(&(hp->elements[i]), &(hp->elements[smallest]));
+            heapify(hp, smallest);
         }
-
     }
 }
+
 void push(MinHeap *hp, ProcessData data)
 {
-    if(hp->size>0) {
-        hp->elements = realloc(hp->elements, (hp->size + 1) * sizeof(ProcessData)) ;
-    } else {
-        hp->elements = malloc(sizeof(ProcessData)) ;
+    if (hp->size > 0)
+    {
+        hp->elements = realloc(hp->elements, (hp->size + 1) * sizeof(ProcessData));
+    }
+    else
+    {
+        hp->elements = malloc(sizeof(ProcessData));
     }
 
-    ProcessData nd ;
+    ProcessData nd;
     nd.priority = data.priority;
-    nd.remainingTime=data.remainingTime;
+    nd.remainingTime = data.remainingTime;
     nd.ID = data.ID;
 
-    int i = (hp->size)++ ;
-    if(hp->algo==1) //hpf
+    int i = (hp->size)++;
+    if (hp->algo == 1) // hpf
     {
-        while(i && nd.priority < hp->elements[PARENT(i)].priority) {
-            hp->elements[i] = hp->elements[PARENT(i)] ;
-            i = PARENT(i) ;
+        while (i && nd.priority < hp->elements[PARENT(i)].priority)
+        {
+            hp->elements[i] = hp->elements[PARENT(i)];
+            i = PARENT(i);
         }
-        hp->elements[i] = nd ;
+        hp->elements[i] = nd;
     }
-    else    //SRTN
+    else // SRTN
     {
-        while(i && nd.remainingTime < hp->elements[PARENT(i)].remainingTime) {
-            hp->elements[i] = hp->elements[PARENT(i)] ;
-            i = PARENT(i) ;
+        while (i && nd.remainingTime < hp->elements[PARENT(i)].remainingTime)
+        {
+            hp->elements[i] = hp->elements[PARENT(i)];
+            i = PARENT(i);
         }
-        hp->elements[i] = nd ;
+        hp->elements[i] = nd;
     }
-
 }
 
 int Empty(MinHeap *hp)
 {
-    return hp->size==0;
+    return hp->size == 0;
 }
-struct ProcessData *pop(MinHeap *hp)
+
+ProcessData *pop(MinHeap *hp)
 {
-    if(hp->size>0) {
+    if (hp->size > 0)
+    {
         ProcessData n;
-        ProcessData* temp = &n;
+        ProcessData *temp = &n;
 
         temp->ID = hp->elements[0].ID;
         temp->priority = hp->elements[0].priority;
-        temp->remainingTime=hp->elements[0].remainingTime;
+        temp->remainingTime = hp->elements[0].remainingTime;
 
         hp->elements[0] = hp->elements[--(hp->size)];
-        hp->elements = realloc(hp->elements, hp->size * sizeof(ProcessData)) ;
-        heapify(hp, 0) ;
+        hp->elements = realloc(hp->elements, hp->size * sizeof(ProcessData));
+        heapify(hp, 0);
         return temp;
-
-    } else {
-        free(hp->elements) ;
+    }
+    else
+    {
+        free(hp->elements);
         return NULL;
     }
 }
-struct ProcessData *peek(MinHeap *hp)
+
+ProcessData *peek(MinHeap *hp)
 {
-    if(hp->size>0) {
+    if (hp->size > 0)
+    {
         ProcessData n;
-        ProcessData* temp = &n;
+        ProcessData *temp = &n;
         temp->ID = hp->elements[0].ID;
         temp->priority = hp->elements[0].priority;
-        temp->remainingTime=hp->elements[0].remainingTime;
-
+        temp->remainingTime = hp->elements[0].remainingTime;
         return temp;
     }
-    else 
+    else
         return NULL;
-
 }
-
-
 
 int main()
 {
-
-  
     ProcessData data;
-    data.ID=1;
-    data.priority=20;
-    data.remainingTime=30;
+    data.ID = 1;
+    data.priority = 20;
+    data.remainingTime = 30;
 
-    Node*q=newNode(data);
-    Queue Q=init();
+    Node *q = newNode(data);
+    Queue Q = init();
 
-    enqueue(&Q,data);
+    enqueue(&Q, data);
+    printf("  %d\n  %d\n  %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); // testing out queue
 
-    
-    printf("  %d\n  %d\n  %d\n",front(&Q)->ID,front(&Q)->priority,front(&Q)->remainingTime);
-    
     return 0;
-
 }
