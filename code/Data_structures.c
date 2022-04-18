@@ -5,7 +5,7 @@ typedef short bool;
 #define true 1
 #define false 0
 #define SHKEY 300
-
+//////new
 #define LEFTCHILD(x) 2 * x + 1  // macros used in heap
 #define RIGHTCHILD(x) 2 * x + 2 // x here is index in the heap array
 #define PARENT(x) (x - 1) / 2
