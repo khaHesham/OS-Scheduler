@@ -127,6 +127,7 @@ MinHeap initMinHeap(int a)
     MinHeap hp;
     hp.size = 0;
     hp.algo = a;
+    return hp;
 }
 
 void swap(ProcessData *d1, ProcessData *d2)
@@ -254,7 +255,7 @@ int main()
     ProcessData data4;
 
     data.ID = 1;
-    data.priority = 10;
+    data.priority = 100;
     data.remainingTime = 30;
 
     data2.ID = 2;
