@@ -56,10 +56,10 @@ typedef struct Queue
     int size;
 } Queue;
 
-Node *newNode(ProcessData data)
+Node *newNode(ProcessData *data)
 {
     Node *temp = (Node *)malloc(sizeof(Node));
-    temp->data = &data;
+    temp->data = data;
     temp->next = NULL;
     return temp;
 }
@@ -80,7 +80,8 @@ void dequeue(Queue *q)
     q->front = q->front->next;
     free(temp); // built in function used to free unused allocated memory!
     if (q->front == NULL)
-        q->rear = NULL;
+        q->rear = NULL;  //empty queue
+
     q->size -= 1;
 }
 
@@ -94,7 +95,7 @@ ProcessData *rear(Queue *q)
     if (q->rear != NULL)
         return q->rear->data;
 }
-void enqueue(Queue *Q, ProcessData data)
+void enqueue(Queue *Q, ProcessData *data)
 {
     Node *temp = newNode(data);
     if (Q->rear == NULL) // 5 enqueu ->
@@ -117,11 +118,11 @@ int isEmpty(Queue *q)
 typedef struct MinHeap
 {
     ProcessData *elements; // array of processes
-    enum algorithm algo;   // used to define which algorithm we are dealing with
+    int algo;   // used to define which algorithm we are dealing with
     int size;              // size of our elements array
 } MinHeap;
 
-MinHeap initMinHeap(enum algorithm a)
+MinHeap initMinHeap(int a)
 {
     MinHeap hp;
     hp.size = 0;
@@ -150,7 +151,7 @@ void heapify(MinHeap *hp, int i)
             heapify(hp, smallest);
         }
     }
-    else // SRTN      (remaining time)
+    else if (hp->algo == SRTN)// SRTN      (remaining time)
     {
         int smallest = (LEFTCHILD(i) < hp->size && hp->elements[LEFTCHILD(i)].remainingTime < hp->elements[i].remainingTime) ? LEFTCHILD(i) : i;
         if (RIGHTCHILD(i) < hp->size && hp->elements[RIGHTCHILD(i)].remainingTime < hp->elements[smallest].remainingTime)
@@ -165,7 +166,7 @@ void heapify(MinHeap *hp, int i)
     }
 }
 
-void push(MinHeap *hp, ProcessData data)
+void push(MinHeap *hp, ProcessData *data)
 {
     if (hp->size > 0)
     {
@@ -177,9 +178,9 @@ void push(MinHeap *hp, ProcessData data)
     }
 
     ProcessData nd;
-    nd.priority = data.priority;
-    nd.remainingTime = data.remainingTime;
-    nd.ID = data.ID;
+    nd.priority = data->priority;
+    nd.remainingTime = data->remainingTime;
+    nd.ID = data->ID;
 
     int i = (hp->size)++;
     if (hp->algo == HPF) // hpf
@@ -191,7 +192,7 @@ void push(MinHeap *hp, ProcessData data)
         }
         hp->elements[i] = nd;
     }
-    else // SRTN
+    else if (hp->algo == SRTN)// SRTN
     {
         while (i && nd.remainingTime < hp->elements[PARENT(i)].remainingTime)
         {
@@ -248,15 +249,79 @@ ProcessData *peek(MinHeap *hp)
 int main()
 {
     ProcessData data;
+    ProcessData data2;
+    ProcessData data3;
+    ProcessData data4;
+
     data.ID = 1;
-    data.priority = 20;
+    data.priority = 10;
     data.remainingTime = 30;
 
-    Node *q = newNode(data);
+    data2.ID = 2;
+    data2.priority = 9;
+    data2.remainingTime = 100;
+
+    data3.ID = 3;
+    data3.priority = 65;
+    data3.remainingTime = 20;
+
+
+    data4.ID = 4;
+    data4.priority = 90;
+    data4.remainingTime = 106;
+
+//                              TESTING QUEUE
     Queue Q = init();
 
-    enqueue(&Q, data);
-    printf("  %d\n  %d\n  %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); // testing out queue
+    enqueue(&Q, &data);
+    enqueue(&Q, &data2);
+    enqueue(&Q, &data3);
+    enqueue(&Q, &data4);
+    fflush(stdout);
+
+    printf("  %d  %d  %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); 
+    dequeue(&Q);
+    dequeue(&Q);
+    fflush(stdout);
+    printf(" front node ID: %d prio: %d RT: %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); 
+    fflush(stdout);
+    printf(" rear node ID: %d Prio: %d RT: %d\n", rear(&Q)->ID, rear(&Q)->priority, rear(&Q)->remainingTime); 
+
+
+    //                      TESTING PRIORITY QUEUE
+    //for SRTN    ie: priority is the remaining time ;)
+    fflush(stdout);
+    printf("\n********************TESTING PRIORITY QUEUE*********   SRTN  **********\n");
+
+    MinHeap hp=initMinHeap(SRTN);
+    push(&hp,&data3);
+    push(&hp,&data4);
+    push(&hp,&data);
+    push(&hp,&data2);
+   
+    fflush(stdout);
+    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp)->ID, peek(&hp)->priority, peek(&hp)->remainingTime); 
+    pop(&hp);
+    fflush(stdout);
+    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp)->ID, peek(&hp)->priority, peek(&hp)->remainingTime); 
+    
+    //for HPF    ie: priority is the remaining time ;)
+    fflush(stdout);
+    printf("\n********************TESTING PRIORITY QUEUE**********  HPF *********\n");
+    MinHeap hp2=initMinHeap(HPF);
+    push(&hp2,&data);
+    push(&hp2,&data3);
+    push(&hp2,&data4);
+    push(&hp2,&data2);
+    
+    fflush(stdout);
+    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp2)->ID, peek(&hp2)->priority, peek(&hp2)->remainingTime); 
+    // ProcessData *p=pop(&hp2);
+    //printf(" front node ID: %d prio: %d RT: %d\n", p->ID, p->priority, p->remainingTime); 
+    pop(&hp2);
+    fflush(stdout);
+    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp2)->ID, peek(&hp2)->priority, peek(&hp2)->remainingTime); 
+    
 
     return 0;
 }
