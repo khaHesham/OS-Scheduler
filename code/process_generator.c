@@ -9,6 +9,15 @@ int main(int argc, char * argv[])
     // 1. Read the input files.
     // 2. Ask the user for the chosen scheduling algorithm and its parameters, if there are any.
     // 3. Initiate and create the scheduler and clock processes.
+    // int pid = fork();
+    // if(pid == 0)
+    //     execl("scheduler", "./scheduler", NULL);
+    // else
+    // {
+    //     int pid2 = fork();
+    //     execl("clock", "./clock", NULL);
+    // }
+    
     // 4. Use this function after creating the clock process to initialize clock
     initClk();
     // To get time use this
@@ -24,4 +33,5 @@ int main(int argc, char * argv[])
 void clearResources(int signum)
 {
     //TODO Clears all resources in case of interruption
+    destroyClk(true);
 }

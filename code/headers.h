@@ -17,6 +17,22 @@ typedef short bool;
 
 #define SHKEY 300
 
+enum STATE
+{
+    RUNNING,
+    WAITING,
+};
+
+
+typedef struct PCB 
+{
+    enum STATE state;
+    int remaining_time;
+    int execution_time;
+    int waiting_time;
+
+} PCB;
+
 
 ///==============================
 //don't mess with this variable//
