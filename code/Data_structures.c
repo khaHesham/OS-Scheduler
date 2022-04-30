@@ -1,10 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "headers.h"
 
-typedef short bool;
-#define true 1
-#define false 0
-#define SHKEY 300
 //////new
 #define LEFTCHILD(x) 2 * x + 1  // macros used in heap
 #define RIGHTCHILD(x) 2 * x + 2 // x here is index in the heap array
@@ -72,6 +67,7 @@ Queue init() // initialize the queue
     return q;
 }
 
+
 void dequeue(Queue *q)
 {
     if (q->size == 0)
@@ -95,6 +91,9 @@ ProcessData *rear(Queue *q)
     if (q->rear != NULL)
         return q->rear->data;
 }
+
+
+
 void enqueue(Queue *Q, ProcessData *data)
 {
     Node *temp = newNode(data);
@@ -107,8 +106,8 @@ void enqueue(Queue *Q, ProcessData *data)
     Q->rear->next = temp;
     Q->rear = temp;
     Q->size += 1;
-    return;
 }
+
 int isEmpty(Queue *q)
 {
     return q->size == 0;
@@ -247,82 +246,83 @@ ProcessData *peek(MinHeap *hp)
         return NULL;
 }
 
-int main()
-{
-    ProcessData data;
-    ProcessData data2;
-    ProcessData data3;
-    ProcessData data4;
+// int main()
+// {
+//     ProcessData data;
+//     ProcessData data2;
+//     ProcessData data3;
+//     ProcessData data4;
 
-    data.ID = 1;
-    data.priority = 100;
-    data.remainingTime = 30;
+//     data.ID = 1;
+//     data.priority = 100;
+//     data.remainingTime = 30;
 
-    data2.ID = 2;
-    data2.priority = 9;
-    data2.remainingTime = 100;
+//     data2.ID = 2;
+//     data2.priority = 9;
+//     data2.remainingTime = 100;
 
-    data3.ID = 3;
-    data3.priority = 65;
-    data3.remainingTime = 20;
-
-
-    data4.ID = 4;
-    data4.priority = 90;
-    data4.remainingTime = 106;
-
-//                              TESTING QUEUE
-    Queue Q = init();
-
-    enqueue(&Q, &data);
-    enqueue(&Q, &data2);
-    enqueue(&Q, &data3);
-    enqueue(&Q, &data4);
-    fflush(stdout);
-
-    printf("  %d  %d  %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); 
-    dequeue(&Q);
-    dequeue(&Q);
-    fflush(stdout);
-    printf(" front node ID: %d prio: %d RT: %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); 
-    fflush(stdout);
-    printf(" rear node ID: %d Prio: %d RT: %d\n", rear(&Q)->ID, rear(&Q)->priority, rear(&Q)->remainingTime); 
+//     data3.ID = 3;
+//     data3.priority = 65;
+//     data3.remainingTime = 20;
 
 
-    //                      TESTING PRIORITY QUEUE
-    //for SRTN    ie: priority is the remaining time ;)
-    fflush(stdout);
-    printf("\n********************TESTING PRIORITY QUEUE*********   SRTN  **********\n");
+//     data4.ID = 4;
+//     data4.priority = 90;
+//     data4.remainingTime = 106;
 
-    MinHeap hp=initMinHeap(SRTN);
-    push(&hp,&data3);
-    push(&hp,&data4);
-    push(&hp,&data);
-    push(&hp,&data2);
+// //                              TESTING QUEUE
+//     Queue Q = init();
+
+//     enqueue(&Q, &data);
+//     enqueue(&Q, &data2);
+//     enqueue(&Q, &data3);
+//     enqueue(&Q, &data4);
+//     fflush(stdout);
+
+//     // printf("  %d  %d  %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); 
+//     // dequeue(&Q);
+//     // dequeue(&Q);
+//     // dequeue(&Q);
+//     // fflush(stdout);
+//     // printf(" front node ID: %d prio: %d RT: %d\n", front(&Q)->ID, front(&Q)->priority, front(&Q)->remainingTime); 
+//     // fflush(stdout);
+//     // printf(" rear node ID: %d Prio: %d RT: %d\n", rear(&Q)->ID, rear(&Q)->priority, rear(&Q)->remainingTime); 
+    
+
+//     //                      TESTING PRIORITY QUEUE
+//     //for SRTN    ie: priority is the remaining time ;)
+//     fflush(stdout);
+//     printf("\n********************TESTING PRIORITY QUEUE*********   SRTN  **********\n");
+
+//     MinHeap hp=initMinHeap(SRTN);
+//     push(&hp,&data3);
+//     push(&hp,&data4);
+//     push(&hp,&data);
+//     push(&hp,&data2);
    
-    fflush(stdout);
-    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp)->ID, peek(&hp)->priority, peek(&hp)->remainingTime); 
-    pop(&hp);
-    fflush(stdout);
-    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp)->ID, peek(&hp)->priority, peek(&hp)->remainingTime); 
+//     fflush(stdout);
+//     printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp)->ID, peek(&hp)->priority, peek(&hp)->remainingTime); 
+//     pop(&hp);
+//     fflush(stdout);
+//     printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp)->ID, peek(&hp)->priority, peek(&hp)->remainingTime); 
     
-    //for HPF    ie: priority is the remaining time ;)
-    fflush(stdout);
-    printf("\n********************TESTING PRIORITY QUEUE**********  HPF *********\n");
-    MinHeap hp2=initMinHeap(HPF);
-    push(&hp2,&data);
-    push(&hp2,&data3);
-    push(&hp2,&data4);
-    push(&hp2,&data2);
+//     //for HPF    ie: priority is the remaining time ;)
+//     fflush(stdout);
+//     printf("\n********************TESTING PRIORITY QUEUE**********  HPF *********\n");
+//     MinHeap hp2=initMinHeap(HPF);
+//     push(&hp2,&data);
+//     push(&hp2,&data3);
+//     push(&hp2,&data4);
+//     push(&hp2,&data2);
     
-    fflush(stdout);
-    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp2)->ID, peek(&hp2)->priority, peek(&hp2)->remainingTime); 
-    // ProcessData *p=pop(&hp2);
-    //printf(" front node ID: %d prio: %d RT: %d\n", p->ID, p->priority, p->remainingTime); 
-    pop(&hp2);
-    fflush(stdout);
-    printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp2)->ID, peek(&hp2)->priority, peek(&hp2)->remainingTime); 
+//     fflush(stdout);
+//     printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp2)->ID, peek(&hp2)->priority, peek(&hp2)->remainingTime); 
+//     // ProcessData *p=pop(&hp2);
+//     //printf(" front node ID: %d prio: %d RT: %d\n", p->ID, p->priority, p->remainingTime); 
+//     pop(&hp2);
+//     fflush(stdout);
+//     printf(" front node ID: %d prio: %d RT: %d\n", peek(&hp2)->ID, peek(&hp2)->priority, peek(&hp2)->remainingTime); 
     
 
-    return 0;
-}
+//     return 0;
+// }
