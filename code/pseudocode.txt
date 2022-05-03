@@ -121,7 +121,7 @@ Process_Generator
     Read input files
     create arrival queue
     Ask the user for the algorithm
-    create scheduler and clock(fork then execl)
+    create scheduler and clock(fork then execl)//clock first
     send algorithm & total number of processes to scheduler as a command line argument
     initiate connection with clock
     create msgq

@@ -1,45 +1,9 @@
-#include <stdio.h>      //if you don't use scanf/printf change this include
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/file.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/sem.h>
-#include <sys/msg.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <signal.h>
-
-typedef short bool;
-#define true 1
-#define false 0
-
-#define SHKEY 300
-
-enum STATE
-{
-    RUNNING,
-    WAITING,
-};
-
-
-typedef struct PCB 
-{
-    enum STATE state;
-    int remaining_time;
-    int execution_time;
-    int waiting_time;
-
-} PCB;
-
+#include "clk_interface.h"
 
 ///==============================
 //don't mess with this variable//
 int * shmaddr;                 //
 //===============================
-
-
 
 int getClk()
 {
