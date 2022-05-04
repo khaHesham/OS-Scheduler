@@ -49,7 +49,7 @@ typedef struct processData
     int arrivaltime;
     int priority;
     int runningtime;
-    int remainingtime;//Initially equals runningtime!!
+    int remainingtime;//Initially equals runningtime!!  khaled: I dont think so conflictions will occour we may initialize it with (-1)
     int id;
 
 }processData;
