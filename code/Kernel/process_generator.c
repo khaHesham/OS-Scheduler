@@ -1,4 +1,5 @@
-#include "headers.h"
+#include "../Defs.h"
+#include "../Clock/clk_interface.h"
 
 void clearResources(int);
 

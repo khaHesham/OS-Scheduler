@@ -5,9 +5,10 @@
  * It is not a real part of operating system!
  */
 
-#include "headers.h"
+#include "../Defs.h"
 
 int shmid;
+
 
 /* Clear the resources before exit */
 void cleanup(int signum)
@@ -43,3 +44,4 @@ int main(int argc, char * argv[])
         (*shmaddr)++;
     }
 }
+
