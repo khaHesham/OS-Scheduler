@@ -25,7 +25,7 @@ processData* dequeue(Queue *q)
     Node *temp = q->front;
     q->front = q->front->next;
 
-    //free(temp); 
+    //free(temp);
     //I made a litlle fix so we can access the dequeued data
     //It's now the responsibillity of the caller to free the allocated memory
 
