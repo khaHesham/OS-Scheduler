@@ -1,0 +1,165 @@
+Project Pseduocode
+
+Scheduler
+{
+    //DON NOT FORGET TO UPDATAE .LOG FILE AFTER EACH ACTION
+    //Global variables
+    int first_start_time
+    int finish_time
+    int finished_processed = 0
+    int current_process_id  = 0//holds the id of the current process
+    //initially zero to make sure that when scheduling the first process the old is always nullptr
+    Process_Data current_process
+    int start_time;//holds the start time of the current process
+    int Total_Waiting = 0
+    int Total_WTA = 0
+    int Total_running_time
+    int WTA_arr[number_of_processes]
+
+    get algorithm & total number of processes from Process_Generator
+    create process table(array of pointers to structs)
+    Create ready_queue data_structure
+    switch(algorithm)
+    {
+        case SRTN: create priority_queue (remaining_time)
+        case HPF: create priority_queue (priority)
+        case RR: create cicular queue
+    }
+    connect to msq(communication between scheduler and Process_Generator)
+
+
+    handler()//when new process arrive
+    {
+        msqrcv()
+        ready_queue.enqueue(new_process)
+        create PCB and insert it in process table
+        //initially
+        execution_time = 0 
+        state = WAITING
+        remaining_time = running_time
+
+        if(algorithm == SRTN)
+        {
+            if(new_process_running time < get_current_remaining())
+                send SIGINT to current process
+                context_switching(current_process_id)
+        }
+    }
+
+    get_current_remaining()
+    {
+        actual_running = get_clock() - start_time
+        return remaining_time_of_current_id - actual_running 
+    }
+
+    handler()//when current process finishes
+    {
+       int crr_remaining_time = get_current_remaining()
+       if(crr_remaining_time == 0)//always true in HPF
+       {
+           process_table[current_process_id] = nullptr
+           TA = get_clock() - current_process.arrival_time
+           waiting_time = TA - current_process.running_time
+           WTA = TA / current_process.running_time
+
+            Total_Waiting += waiting_time
+            Total_WTA += WTA
+            Total_running_time += current_process.running_time
+            WTA_arr[current_process_id] = WTA
+
+            finished_processed ++
+            if(finished_processed == total_no_of_processes)
+                Performance_file()
+                exit()
+       }
+       else//in case of RR and SRTN to restore process in ready_queue
+       {
+           ready_queue.enqueue(current_process)
+       }
+
+
+       //schedule new process
+        context_switching(current_process_id)
+    }
+
+    Performance_file()
+    {
+
+    }
+
+    context_switching(int old_id)
+    {
+        //save state of old_id
+        if(process_table[old_id] != nullptr)
+        {
+            remaining_time_old_id = get_current_remaining()
+            actual_running = get_clock() - start_time
+            execution_time += actual_running
+            state_old_id = WAITING
+        }
+
+        //schedule and create new process
+        current_process = ready_queue.dequeue()
+        current_process_id = current_process.id
+        start_time = get_clock()
+        state_new_id = RUNNING
+        send remaining_time as a parameter based on algorithm //some calculations especially in RR
+        create and fork new_id & execl()
+    }
+}
+
+struct messagebuff
+{
+    long msgtype;
+    struct processData process_data;
+}
+
+
+
+Process_Generator
+{
+    Read input files
+    create arrival queue
+    Ask the user for the algorithm
+    create scheduler and clock(fork then execl)//clock first
+    send algorithm & total number of processes to scheduler as a command line argument
+    initiate connection with clock
+    create msgq
+
+    while(arrival_queue not empty)
+    {
+        current_time = get_clock()
+
+        while(true)
+        {
+            next_process = arrival_queue.peek()
+            if(next_process.arriva_time != current_time)
+                break
+            dequeue()
+            send to scheduler
+        }
+        
+        sleep()
+    }
+
+    waitpid(scheduler_PID)
+    clearResources()//destroyclock(true)
+}
+
+
+Process
+{
+    //Main task is to monitor clock and notify the scheduler
+    get remaining time from scheduler as command line argument
+    current_time = get_clock()
+    finish_time = current_time + remaining_time
+    while(remaining_time > 0)
+    {
+        remaining_time = finish_time - get_clock()
+    }
+
+    send signal to the scheduler
+    exit()
+
+    //in case of SIGINT from scheduler terminate (SRTN)
+}  
